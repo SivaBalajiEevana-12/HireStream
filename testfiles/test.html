@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groq AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        #response {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Groq AI Chat</h2>
+
+    <textarea id="prompt" placeholder="Ask something..."></textarea>
+    <br>
+    <button onclick="askAI()">Send</button>
+
+    <div id="response"></div>
+
+    <script>
+        async function askAI() {
+            const prompt = document.getElementById("prompt").value;
+            const responseDiv = document.getElementById("response");
+
+            responseDiv.innerHTML = "Thinking...";
+
+            try {
+                const response = await fetch(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer"
+                        },
+                        body: JSON.stringify({
+                            model: "llama-3.3-70b-versatile",
+                            messages: [
+                                {
+                                    role: "user",
+                                    content: prompt
+                                }
+                            ]
+                        })
+                    }
+                );
+
+                const data = await response.json();
+
+                responseDiv.innerHTML =
+                    data.choices[0].message.content;
+
+            } catch (error) {
+                responseDiv.innerHTML = error.message;
+            }
+        }
+    </script>
+
+</body>
+</html>
